@@ -11,10 +11,18 @@ DEMO deployments:
 
 To run this project
 ```
-cd /vagrant/catalog # code should be checked out here
-chmod u+x bootstrap.sh # make script executable
-./bootstrap.sh # initialize database
-python application.py # start application
+You need Vagrant and VirtualBox. I tested with ubuntu/bionic64
+apt update and install:
+* python3-pip
+* libpq-dev
+
+Once your vm is running, execute a few commands:
+* cd /vagrant/catalog # code should be checked out here
+* chmod u+x bootstrap.sh # make script executable
+* ./bootstrap.sh # initialize database
+* python3 application.py # start application
+
+Navigate to http://localhost:8000 to see the site running
 ```
 
 ## 1. Contents
@@ -26,7 +34,6 @@ catalog
 +-- client_secrets.json -- Google client authentication data
 +-- database_setup.py -- ORM database definition
 +-- loadproductcatalog.py -- script to insert values from json catalog file
-+-- productcatalog.db -- database data file
 +-- README.md -- this document
 +-- static -- static data
 |   +-- images -- product image files
