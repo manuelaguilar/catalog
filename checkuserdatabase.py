@@ -11,5 +11,5 @@ session = DBSession()
 
 users = session.query(User).all()
 for i in users:
-    print i.serialize
+    print(i.serialize)
 

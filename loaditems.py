@@ -21,7 +21,7 @@ session.commit()
 # Test Category
 
 user = session.query(User).filter_by(name='TestUser').one()
-print 'User id:', user.id
+print("User id:", user.id)
 testcategory = ProductCategory(name='Category1', user_id = user.id)
 session.add(testcategory)
 session.commit()
@@ -52,5 +52,5 @@ session.commit()
 # get items
 items = session.query(CategoryItem).all()
 for i in items:
-    print i.serialize
+    print(i.serialize)
 

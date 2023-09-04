@@ -21,7 +21,7 @@ CLIENT_ID = json.loads(
 APPLICATION_NAME = "Product Catalog Application"
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///productcatalog.db')
+engine = create_engine('sqlite:///productcatalog.db', connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -152,18 +152,18 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
     stored_access_token = login_session.get('access_token')
-    print "Current access token: ", stored_access_token
+    print("Current access token: ", stored_access_token)
     stored_gplus_id = login_session.get('gplus_id')
-    print "Current gplus id is: ", gplus_id
-    print "Stored gplus id is: ", stored_gplus_id
+    print("Current gplus id is: ", gplus_id)
+    print("Stored gplus id is: ", stored_gplus_id)
 
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        print "Current user is already connected."
+        print("Current user is already connected.")
         response = make_response(json.dumps('Current user is already \
             connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
@@ -198,7 +198,7 @@ def gconnect():
     output += ' " style = "width: 150px; height: 150px;border-radius: 150px;\
         -webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("You are now logged in as %s" % login_session['username'])
-    print "done!"
+    print("done!")
     return output
 
 
@@ -215,7 +215,7 @@ def gdisconnect():
         return response
 
     # check token status
-    print 'Verifying token', login_session['access_token']
+    print("Verifying token", login_session['access_token'])
     url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % \
         login_session['access_token']
     h = httplib2.Http()
@@ -315,7 +315,7 @@ def categoryItemJSON(product_category_name, category_item_name):
                               ProductCategory).filter_by(
                                       name=product_category_name).one()
         product_category_id = product_category.id
-        print 'Category id ', product_category_id
+        print("Category id ", product_category_id)
         category_item = session.query(CategoryItem).filter_by(
                 name=category_item_name,
                 product_category_id=product_category_id).one()
@@ -360,12 +360,12 @@ def showCategory(product_category_name):
     try:
         category = session.query(ProductCategory).\
                filter_by(name=product_category_name).one()
-        print 'product category ', category.name
+        print("product category ", category.name)
         items = session.query(CategoryItem).\
             filter_by(product_category_id=category.id).all()
         return render_template('products.html', items=items, category=category)
-    except Exception, e:
-        print str(e)
+    except Exception as e:
+        print(str(e))
         return ('Category requested not found')
 
 
@@ -390,7 +390,7 @@ def showCategoryItem(product_category_name, category_item_name):
     try:
         category = session.query(ProductCategory).\
                filter_by(name=product_category_name).one()
-        print "Category id ", category.id
+        print("Category id ", category.id)
         item = session.query(CategoryItem).\
             filter_by(name=category_item_name,
                       product_category_id=category.id).one()
@@ -398,8 +398,8 @@ def showCategoryItem(product_category_name, category_item_name):
                                                       category_item_name):
             return render_template('item.html', item=item, category=category)
         return render_template('publicitem.html', item=item, category=category)
-    except Exception, e:
-        print str(e)
+    except Exception as e:
+        print(str(e))
         return ('No item for this category has been found')
 
 
@@ -413,12 +413,12 @@ def showCategoryItemId(product_category_id, category_item_id):
         item = session.query(
             CategoryItem).filter_by(id=category_item_id,
                                     product_category_id=category.id).one()
-        print 'Item id ', item.id
+        print("Item id ", item.id)
         return redirect(url_for('showCategoryItem',
                         product_category_name=category.name,
                         category_item_name=item.name))
-    except Exception, e:
-        print "Exception ", str(e)
+    except Exception as e:
+        print("Exception ", str(e))
         return ('No item matching this category found')
 
 
@@ -436,10 +436,10 @@ def newCategoryItem(product_category_name):
                             product_category_name=product_category_name))
         if request.method == 'POST':
             # check if item name exists already in category
-            print "Name: ", request.form['name']
+            print("Name: ", request.form['name'])
             product_category = session.query(ProductCategory).filter_by(
                                             name=product_category_name).one()
-            print "Product id: ", product_category.id
+            print("Product id: ", product_category.id)
             checkitem = session.query(CategoryItem).\
                 filter_by(name=request.form['name'],
                           product_category_id=product_category.id).first()
@@ -463,8 +463,8 @@ def newCategoryItem(product_category_name):
             category = session.query(ProductCategory).\
                     filter_by(name=product_category_name).one()
             return render_template('newitem.html', category=category)
-    except Exception, e:
-        print 'Exception ', str(e)
+    except Exception as e:
+        print("Exception ", str(e))
         return ('No category can be found to add item.')
 
 
@@ -473,7 +473,7 @@ def editCategoryItemId(product_category_id, category_item_id):
     """ Finds category and item name then forwards to function for
     item edit and update """
     try:
-        print 'Is user logged in:', login_session.get('user_id')
+        print("Is user logged in:", login_session.get("user_id"))
         if not isUserAuthenticated():
             flash("You're not authorized to edit this item!")
             return redirect(url_for('showCategoryItemId',
@@ -487,8 +487,8 @@ def editCategoryItemId(product_category_id, category_item_id):
         return redirect(url_for('editCategoryItem',
                         product_category_name=category.name,
                         category_item_name=item.name))
-    except Exception, e:
-        print "Exception ", str(e)
+    except Exception as e:
+        print("Exception ", str(e))
         return ('No item matching this category found')
 
 
@@ -552,8 +552,8 @@ def editCategoryItem(product_category_name, category_item_name):
                           product_category_id=category.id).one()
             return render_template('edititem.html', category=category,
                                    item=item_update)
-    except Exception, e:
-        print 'Exception ', str(e)
+    except Exception as e:
+        print("Exception ", str(e))
         return ('No category can be found to edit item.')
 
 
@@ -578,8 +578,8 @@ def deleteCategoryItemId(product_category_id, category_item_id):
         return redirect(url_for('deleteCategoryItem',
                         product_category_name=category.name,
                         category_item_name=item.name))
-    except Exception, e:
-            print "Exception", str(e)
+    except Exception as e:
+            print("Exception", str(e))
             return('No item matching this category found.')
 
 
@@ -621,8 +621,8 @@ def deleteCategoryItem(product_category_name, category_item_name):
                           query(ProductCategory.id).filter_by(
                               name=product_category_name)).one()
             return render_template('deleteitem.html', item=item_delete)
-    except Exception, e:
-        print 'Exception', str(e)
+    except Exception as e:
+        print("Exception", str(e))
         return ('No item can be found for deletion.')
 
 
